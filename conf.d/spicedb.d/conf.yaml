@@ -1,0 +1,7 @@
+---
+init_config:
+  service: spicedb
+
+instances:
+  - openmetrics_endpoint: "http://spicedb:9090/metrics"
+    min_collection_interval: 5
