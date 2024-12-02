@@ -1,0 +1,33 @@
+---
+name: metrics-adventure
+
+services:
+  spicedb:
+    image: authzed/spicedb:v1.38.1
+    # image: spicedb
+    command: "serve"
+    environment:
+      SPICEDB_GRPC_PRESHARED_KEY: "thisisnotasecret"
+    ports:
+      - "9090:9090"
+  thumper:
+    image: thumper
+    command: "run --endpoint spicedb:50051 --token thisisnotasecret /scripts/example.yaml"
+    depends_on:
+      - spicedb
+      - thumper-init
+  thumper-init:
+    image: thumper
+    command: "migrate --endpoint spicedb:50051 --token thisisnotasecret /scripts/schema.yaml"
+    depends_on:
+      spicedb:
+        condition: service_started
+  datadog:
+    image: datadog/agent
+    # DO NOT COMMIT
+    environment:
+      DD_API_KEY: ${DD_API_KEY}
+      DD_HOSTNAME: "yetibox"
+    volumes:
+      - "./conf.d:/conf.d"
+      - "./datadog.yaml:/datadog.yaml"
