@@ -3,8 +3,8 @@ name: metrics-adventure
 
 services:
   spicedb:
-    image: authzed/spicedb:v1.38.1
-    # image: spicedb
+    #image: authzed/spicedb:v1.38.1
+    image: spicedb
     command: "serve"
     environment:
       SPICEDB_GRPC_PRESHARED_KEY: "thisisnotasecret"
@@ -23,8 +23,8 @@ services:
       spicedb:
         condition: service_started
   datadog:
-    image: datadog/agent
-    # DO NOT COMMIT
+    #image: datadog/agent
+    image: datadog
     environment:
       DD_API_KEY: ${DD_API_KEY}
       DD_HOSTNAME: "yetibox"
