@@ -3,13 +3,39 @@ name: metrics-adventure
 
 services:
   spicedb:
-    image: authzed/spicedb:v1.38.1
-    # image: spicedb
+    image: "authzed/spicedb:v1.38.1"
     command: "serve"
+    restart: "on-failure"
     environment:
       SPICEDB_GRPC_PRESHARED_KEY: "thisisnotasecret"
+      SPICEDB_DATASTORE_ENGINE: "postgres"
+      SPICEDB_DATASTORE_CONN_URI: "postgres://postgres:secret@database:5432/spicedb?sslmode=disable"
     ports:
       - "9090:9090"
+    depends_on:
+      - spicedb-migrate
+
+  spicedb-migrate:
+    image: "authzed/spicedb:v1.38.1"
+    command: "migrate head"
+    restart: "on-failure"
+    environment:
+      SPICEDB_DATASTORE_ENGINE: "postgres"
+      SPICEDB_DATASTORE_CONN_URI: "postgres://postgres:secret@database:5432/spicedb?sslmode=disable"
+    depends_on:
+      - "database"
+
+  database:
+    image: "postgres:16"
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_PASSWORD=secret"
+      - "POSTGRES_DB=spicedb"
+    # This part keeps postgres's data around when you bring the system down and back up
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+
   thumper:
     image: thumper
     command: "run --endpoint spicedb:50051 --token thisisnotasecret /scripts/example.yaml"
@@ -19,15 +45,20 @@ services:
   thumper-init:
     image: thumper
     command: "migrate --endpoint spicedb:50051 --token thisisnotasecret /scripts/schema.yaml"
+    # Restarting on failure should mean that the init reattempts until it succeeds
+    restart: on-failure
     depends_on:
       spicedb:
         condition: service_started
+
   datadog:
     image: datadog/agent
-    # DO NOT COMMIT
     environment:
       DD_API_KEY: ${DD_API_KEY}
       DD_HOSTNAME: "yetibox"
     volumes:
       - "./conf.d:/conf.d"
       - "./datadog.yaml:/datadog.yaml"
+
+volumes:
+  pgdata:
