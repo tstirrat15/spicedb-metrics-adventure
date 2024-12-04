@@ -9,15 +9,14 @@ instances:
       - grpc_server_handling_seconds:
           name: "grpc.server.handling"
           type: "histogram"
-      - spicedb_cache_hits:
-          name: "cache.hits"
+      - grpc_server_handled:
+          name: "grpc.server.handled"
           type: "counter"
-      - spicedb_cache_misses:
-          name: "cache.misses"
+      - process_cpu_seconds:
+          name: "process.cpu.seconds"
           type: "counter"
-      - spicedb_datastore_watching_schema_cache_tracked_revision:
-          name: "datastore.watching_schema_cache.tracked_revision"
+      - process_virtual_memory_bytes:
+          name: "process.virtual_memory_bytes"
           type: "gauge"
     histogram_buckets_as_distributions: true
-    collect_counters_with_distributions: true
     min_collection_interval: 5
