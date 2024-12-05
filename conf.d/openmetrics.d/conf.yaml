@@ -4,6 +4,7 @@ init_config:
 
 instances:
   - openmetrics_endpoint: "http://spicedb:9090/metrics"
+    # Prefixes all of the metrics scraped by DD with `spicedb.`
     namespace: "spicedb"
     metrics:
       - grpc_server_handling_seconds:
@@ -12,6 +13,8 @@ instances:
       - grpc_server_handled:
           name: "grpc.server.handled"
           type: "counter"
+      # NOTE: for counter metrics that are suffixed by _total, you need to
+      # remove the suffix for Datadog to pick it up correctly.
       - process_cpu_seconds:
           name: "process.cpu.seconds"
           type: "counter"
