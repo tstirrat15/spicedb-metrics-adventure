@@ -10,6 +10,13 @@ services:
       SPICEDB_GRPC_PRESHARED_KEY: "thisisnotasecret"
       SPICEDB_DATASTORE_ENGINE: "postgres"
       SPICEDB_DATASTORE_CONN_URI: "postgres://postgres:secret@database:5432/spicedb?sslmode=disable"
+
+      # OTEL flags
+      SPICEDB_OTEL_ENDPOINT: "datadog:4317"
+      SPICEDB_OTEL_INSECURE: true
+      SPICEDB_OTEL_PROVIDER: "otlpgrpc"
+      SPICEDB_OTEL_SAMPLE_RATIO: 1.0
+      SPICEDB_OTEL_TRACE_PROPAGATOR: "b3"
     ports:
       - "9090:9090"
     depends_on:
@@ -56,6 +63,10 @@ services:
     environment:
       DD_API_KEY: ${DD_API_KEY}
       DD_HOSTNAME: "yetibox"
+
+      # NOTE: you can't set this via the config; it needs to come from environment variables.
+      DD_OTLP_CONFIG_RECEIVER_PROTOCOLS_GRPC_ENDPOINT: "0.0.0.0:4317"
+      DD_OTLP_CONFIG_TRACES_ENABLED: true
     volumes:
       - "./conf.d:/conf.d"
       - "./datadog.yaml:/datadog.yaml"
