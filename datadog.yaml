@@ -1,7 +1,4 @@
 ---
-# This is for trace autodetection and we don't currently care.
-apm_config:
-  enabled: false
 # We also don't care about logs
 process_config:
   container_collection:
