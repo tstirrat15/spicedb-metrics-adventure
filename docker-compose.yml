@@ -19,6 +19,11 @@ services:
       - "./conf.d:/conf.d"
       - "./datadog.yaml:/datadog.yaml"
 
+  otel-collector:
+    image: "otel/opentelemetry-collector-contrib"
+    volumes:
+      - "./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml"
+
   spicedb:
     image: "authzed/spicedb:v1.38.1"
     command: "serve"
