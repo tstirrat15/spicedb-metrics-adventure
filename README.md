@@ -9,6 +9,14 @@ The metrics produced in this configuration are submitted as custom metrics. We'r
 on an official SpiceDB integration that would make the metrics into standard metrics and simplify
 setup and configuration.
 
+### Running in Production
+A "real" deployment would use a container runtime of some sort. One approach would be to
+run the datadog agent as a sidecar; another would be to run a set of agents using
+the [Datadog Operator](https://docs.datadoghq.com/getting_started/containers/datadog_operator/)
+and then point them at your SpiceDB instances using [annotations](https://docs.datadoghq.com/containers/kubernetes/integrations).
+This repository is only intended to communicate the agent check configuration
+and the required SpiceDB configuration.
+
 ## Running this repo
 ```
 mv placeholder.env .env
