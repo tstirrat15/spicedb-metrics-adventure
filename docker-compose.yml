@@ -60,15 +60,14 @@ services:
   # Load generation tooling. This is to ensure that there are metrics
   # and traces to look at.
   thumper:
-    # NOTE: this a custom image; this will be open-sourced.
-    image: "thumper"
+    image: "authzed/thumper"
     command: "run --endpoint spicedb:50051 --token thisisnotasecret /scripts/example.yaml"
     depends_on:
       - "spicedb"
       - "thumper-init"
   # This runs the schema write for the subsequent load generation.
   thumper-init:
-    image: "thumper"
+    image: "authzed/thumper"
     command: "migrate --endpoint spicedb:50051 --token thisisnotasecret /scripts/schema.yaml"
     # Restarting on failure should mean that the init reattempts until it succeeds
     restart: "on-failure"
