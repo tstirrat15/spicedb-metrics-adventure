@@ -22,9 +22,6 @@ Run `docker compose up`.
 This is an internal load-testing tool that we built a while back. We use it in this project to
 exercise gRPC endpoints so that there are traces and metrics to look at.
 
-We'll be open-sourcing it sometime soon, but in the meantime we can provide a binary or a docker container export
-if desired. You can also generate load manually using a script or the `zed` CLI tool.
-
 ## The Dashboard
 This is a preview of the dashboard that will be bundled with the SpiceDB Community integration.
 It shows throughput, latency, and some basic node CPU and memory metrics. Note that the CPU and memory
