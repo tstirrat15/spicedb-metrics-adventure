@@ -3,7 +3,7 @@ init_config:
   service: spicedb
 
 instances:
-  - openmetrics_endpoint: "http://spicedb:9090/metrics"
+  - openmetrics_endpoint: "http://otel-collector:9090/metrics"
     # Prefixes all of the metrics scraped by DD with `spicedb.`
     namespace: "spicedb"
     metrics:
