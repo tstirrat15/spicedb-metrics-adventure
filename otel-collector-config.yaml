@@ -15,6 +15,18 @@ processors:
     check_interval: 5s
     limit_mib: 4000
     spike_limit_mib: 500
+  metricstransform:
+    transforms:
+      - include: spicedb_cache_hits_total
+        action: update
+        new_name: rocksdb_block_cache_hits
+      - include: spicedb_cache_misses_total
+        action: update
+        new_name: rocksdb_block_cache_misses
+  filter:
+    metrics:
+      metric:
+        - 'name != "spicedb_cache_hits_total" and name != "spicedb_cache_misses_total"'
 
 exporters:
   prometheus:
@@ -25,5 +37,9 @@ service:
   pipelines:
     metrics:
       receivers: [prometheus]
-      processors: [memory_limiter, batch]
+      processors:
+        - filter
+        - memory_limiter
+        - batch
+        - metricstransform
       exporters: [prometheus]
