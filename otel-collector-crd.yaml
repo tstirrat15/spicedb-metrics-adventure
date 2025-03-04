@@ -1,0 +1,48 @@
+---
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: datadog-export
+  namespace: authzed-monitoring
+spec:
+  config:
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: "otel-collector"
+              scrape_interval: "5s"
+              static_configs:
+                - targets: ["thanos-federate-proxy.authzed-system:9090"]
+              metrics_path: "/federate"
+              params:
+                'match[]':
+                  # TODO: this could theoretically just be "all"
+                  -  '{__name__=~"spicedb_.*|grpc_server_.*|process_cpu_seconds_total|process_virtual_memory_bytes",authzed_com_permission_system="thumper-crdb"}'
+    processors:
+      # TODO: filter
+      batch:
+        send_batch_max_size: 1000
+        send_batch_size: 100
+        timeout: 10s
+      memory_limiter:
+        check_interval: 5s
+        limit_mib: 4000
+        spike_limit_mib: 500
+
+    exporters:
+      datadog/exporter:
+        api:
+          site: datadoghq.com
+          # TODO: Remove this
+          key: fb72de04adcdd9dc95856ee966cd3c83
+
+    service:
+      pipelines:
+        metrics:
+          receivers: [prometheus]
+          processors: [memory_limiter, batch]
+          exporters: [datadog/exporter]
+      telemetry:
+        logs:
+          development: true
